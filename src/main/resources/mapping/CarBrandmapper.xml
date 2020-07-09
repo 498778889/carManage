@@ -21,9 +21,9 @@
     delete from CAR_BRAND
     where ID = #{id,jdbcType=DECIMAL}
   </delete>
-  <insert id="insert" keyColumn="ID" keyProperty="id" parameterType="com.ncu.car_manage.pojo.CarBrand" useGeneratedKeys="true">
-    insert into CAR_BRAND (BRAND)
-    values (#{brand,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.ncu.car_manage.pojo.CarBrand" >
+    insert into CAR_BRAND (ID,BRAND)
+    values (SEQ_CAR_BRAND.nextval,#{brand,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.ncu.car_manage.pojo.CarBrand" useGeneratedKeys="true">
     insert into CAR_BRAND

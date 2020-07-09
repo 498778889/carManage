@@ -1,11 +1,7 @@
 package com.ncu.car_manage.utils;
 
-import com.ncu.car_manage.pojo.CarBrand;
 import com.ncu.car_manage.pojo.CarRecord;
-import com.ncu.car_manage.service.CarBrandService;
 import com.ncu.car_manage.service.CarRecordService;
-import com.ncu.car_manage.service.CarService;
-import com.ncu.car_manage.service.UserService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +15,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Objects;
 
 @Aspect

@@ -45,9 +45,10 @@ public class PageController {
     }
 
     @RequestMapping(value = "/carDetail/{id}", name = "详细信息")
-    public String toCarDetail(Model model, @PathVariable String id) {
+    public String toCarDetail(Model model, @PathVariable String id,String userName) {
         Car car = carService.findCarById(Integer.parseInt(id));
         model.addAttribute("car",car);
+        model.addAttribute("userName",userName);
         return "carDetail";
     }
 }
