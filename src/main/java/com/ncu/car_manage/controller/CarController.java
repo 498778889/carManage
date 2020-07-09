@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.ncu.car_manage.pojo.Car;
 import com.ncu.car_manage.service.CarService;
 import com.ncu.car_manage.utils.JsonResult;
+import com.ncu.car_manage.utils.LoggerOperater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class CarController {
     private CarService carService;
 
     @PostMapping("/add")
+    @LoggerOperater(type = "add")
     public JsonResult addCar(@RequestBody Car car){
         if (carService.addCar(car)){
             return JsonResult.OK("添加成功!");
@@ -25,6 +27,7 @@ public class CarController {
     }
 
     @PostMapping("/update")
+    @LoggerOperater(type = "update")
     public JsonResult updateCar(@RequestBody Car car){
         if (carService.updateCar(car)){
             return JsonResult.OK("修改成功!");
@@ -33,13 +36,14 @@ public class CarController {
     }
 
     @GetMapping("/delete")
+    @LoggerOperater(type = "delete")
     public JsonResult deleteCar(int id){
         if (carService.deleteCar(id)){
             return JsonResult.OK("删除成功!");
         }
         return JsonResult.OK("删除失败!");
     }
-
+    @LoggerOperater(type = "deleteSelected")
     @RequestMapping("/deleteSelected")
     public JsonResult deleteSelected(List<Integer> idList ){
         boolean action= false;

@@ -2,6 +2,8 @@ package com.ncu.car_manage.pojo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class Car {
     int id;
@@ -11,4 +13,5 @@ public class Car {
     float fuelConsumption;
     int dailyRent;
     String addPerson;
+    Date addTime;
 }

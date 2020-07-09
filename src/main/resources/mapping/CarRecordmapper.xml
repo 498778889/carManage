@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncu.car_manage.mapper.CarRecordmapper">
+  <resultMap id="BaseResultMap" type="com.ncu.car_manage.pojo.CarRecord">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+    <result column="OPERATION_TYPE" jdbcType="DECIMAL" property="operationType" />
+    <result column="OPERATE_TIME" jdbcType="TIMESTAMP" property="operateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, USERNAME, OPERATION_TYPE, OPERATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.math.BigDecimal" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CAR_RECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultType="com.ncu.car_manage.pojo.CarRecord">
+    select  * from CAR_RECORD
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal">
+    delete from CAR_RECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert"  parameterType="com.ncu.car_manage.pojo.CarRecord">
+    insert into CAR_RECORD (Id,USERNAME, OPERATION_TYPE, OPERATE_TIME
+      )
+    values (seq_car_record.nextval,#{username,jdbcType=VARCHAR},
+            #{operationType,jdbcType=DECIMAL}, sysdate
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.ncu.car_manage.pojo.CarRecord" useGeneratedKeys="true">
+    insert into CAR_RECORD
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        USERNAME,
+      </if>
+      <if test="operationType != null">
+        OPERATION_TYPE,
+      </if>
+      <if test="operateTime != null">
+        OPERATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null">
+        #{operationType,jdbcType=DECIMAL},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ncu.car_manage.pojo.CarRecord">
+    update CAR_RECORD
+    <set>
+      <if test="username != null">
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null">
+        OPERATION_TYPE = #{operationType,jdbcType=DECIMAL},
+      </if>
+      <if test="operateTime != null">
+        OPERATE_TIME = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ncu.car_manage.pojo.CarRecord">
+    update CAR_RECORD
+    set USERNAME = #{username,jdbcType=VARCHAR},
+      OPERATION_TYPE = #{operationType,jdbcType=DECIMAL},
+      OPERATE_TIME = #{operateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

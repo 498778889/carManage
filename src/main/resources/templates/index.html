@@ -88,6 +88,7 @@
                     {field: 'sites', title: '座位数'},
                     {field: 'fuelConsumption', title: '日租金(元)'},
                     {field: 'dailyRent', title: '百公里耗油(升/百公里)',minWidth: 200,width:200},
+                    {field: 'addTime', title: '添加时间'},
                     {field: 'addPerson', title: '添加人'},
                     {
                         fixed: 'right', title: '操作', width: 150,
@@ -179,7 +180,7 @@
                     "addPerson": addPerson
                 };
                 jQuery.ajax({
-                    url: "http://127.0.0.1:8088/car/add",
+                    url: "http://127.0.0.1:8088/car/add?userName="+userNameSpan,
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     data: JSON.stringify(data), // 传递给后台的数据
@@ -281,7 +282,7 @@
                     "addPerson": addPerson
                 };
                 jQuery.ajax({
-                    url: "http://127.0.0.1:8088/car/update",
+                    url: "http://127.0.0.1:8088/car/update?userName="+userNameSpan,
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     data: JSON.stringify(data), // 传递给后台的数据
@@ -299,7 +300,7 @@
     }
 
     function deleteCar(id) {
-        var url = "/car/delete?id="+id;
+        var url = "/car/delete?id="+id+"&userName="+userNameSpan;
         var r = confirm("是否确认删除？");
         if (r === true) {
             jQuery.get(url,function (res) {
@@ -321,7 +322,7 @@
         if (r === true) {
             for (var d =0; d<tbCar.checkStatus('tb').data.length;d++){
 
-                var url = "/car/delete?id="+tbCar.checkStatus('tb').data[d].id;
+                var url = "/car/delete?id="+tbCar.checkStatus('tb').data[d].id+"&userName="+userNameSpan;
                 jQuery.get(url,function (res) {
                     if (res.status!==200){
                         st=false;

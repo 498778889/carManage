@@ -3,6 +3,7 @@ package com.ncu.car_manage.controller;
 import com.ncu.car_manage.pojo.User;
 import com.ncu.car_manage.service.UserService;
 import com.ncu.car_manage.utils.JsonResult;
+import com.ncu.car_manage.utils.LoggerOperater;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 public class UserController {
     @Autowired
     private UserService userService;
+    @LoggerOperater(type = "register")
     @PostMapping("/register")
     public JsonResult register(@RequestBody User user){
         boolean res = userService.register(user);

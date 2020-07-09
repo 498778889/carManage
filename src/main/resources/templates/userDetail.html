@@ -17,7 +17,7 @@
                 <li class="layui-nav-item"><a th:href="@{'/carManage/index?userName='+${userName}}">查看汽车信息</a></li>
             </ul>
             <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item"><a href="javascript:;"> <span id="userNameSpan" th:text="${userName}"></span> </a>
+                <li class="layui-nav-item"><a href="javascript:"> <span id="userNameSpan" th:text="${userName}"></span> </a>
                     <dl class="layui-nav-child">
                         <dd>
                             <a th:href="@{'/carManage/userDetail?userName='+${userName}}">基本资料</a>

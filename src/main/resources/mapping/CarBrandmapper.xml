@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncu.car_manage.mapper.CarBrandmapper">
+  <resultMap id="BaseResultMap" type="com.ncu.car_manage.pojo.CarBrand">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="BRAND" jdbcType="VARCHAR" property="brand" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, BRAND
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.math.BigDecimal" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CAR_BRAND
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultType="com.ncu.car_manage.pojo.CarBrand">
+    select * from CAR_BRAND;
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal">
+    delete from CAR_BRAND
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" keyColumn="ID" keyProperty="id" parameterType="com.ncu.car_manage.pojo.CarBrand" useGeneratedKeys="true">
+    insert into CAR_BRAND (BRAND)
+    values (#{brand,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.ncu.car_manage.pojo.CarBrand" useGeneratedKeys="true">
+    insert into CAR_BRAND
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="brand != null">
+        BRAND,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="brand != null">
+        #{brand,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ncu.car_manage.pojo.CarBrand">
+    update CAR_BRAND
+    <set>
+      <if test="brand != null">
+        BRAND = #{brand,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ncu.car_manage.pojo.CarBrand">
+    update CAR_BRAND
+    set BRAND = #{brand,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

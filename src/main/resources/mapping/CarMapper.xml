@@ -9,9 +9,10 @@
         <result property="fuelConsumption" column="fuelconsumption" javaType="float" jdbcType="NUMERIC"/>
         <result property="dailyRent" column="dailyrent" javaType="int" jdbcType="NUMERIC"/>
         <result property="addPerson" column="nickname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="addTime" column="addtime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <insert id="addCar" parameterType="com.ncu.car_manage.pojo.Car">
-        insert into car(id,brand,color,sites,fuelconsumption,dailyrent,addperson)
+        insert into car(id,brand,color,sites,fuelconsumption,dailyrent,addperson,addTime)
         values
         (seq_car.nextval,
         #{brand,jdbcType=VARCHAR},
@@ -19,7 +20,8 @@
         #{sites,jdbcType=NUMERIC},
         #{fuelConsumption,jdbcType=NUMERIC},
         #{dailyRent,jdbcType=NUMERIC},
-        #{addPerson,jdbcType=VARCHAR})
+        #{addPerson,jdbcType=VARCHAR},
+         sysdate)
     </insert>
     <update id="update" parameterType="com.ncu.car_manage.pojo.Car">
         update car set
@@ -51,6 +53,7 @@
         WHERE rn &gt;= (#{page}*#{size})
     </select>
     <select id="findCarById" resultMap="carMap" parameterType="integer">
-        select CAR.id,CAR.brand,CAR.color,CAR.sites,CAR.fuelconsumption,CAR.dailyrent,CAR_USER.nickname from Car,CAR_USER where car.addperson=car_user.username and car.id=#{id}
+        select CAR.id,CAR.brand,CAR.color,CAR.sites,CAR.fuelconsumption,CAR.dailyrent,CAR_USER.nickname ,Car.ADDTIME
+        from Car,CAR_USER where car.addperson=car_user.username and car.id=#{id}
     </select>
 </mapper>
