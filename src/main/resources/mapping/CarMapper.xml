@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ncu.car_manage.mapper.CarMapper">
+    <resultMap id="carMap" type="com.ncu.car_manage.pojo.Car">
+        <id property="id" column="id" javaType="int" jdbcType="NUMERIC"/>
+        <result property="brand" column="brand" javaType="String" jdbcType="VARCHAR"/>
+        <result property="color" column="color" javaType="String" jdbcType="VARCHAR"/>
+        <result property="sites" column="sites" javaType="int" jdbcType="NUMERIC"/>
+        <result property="fuelConsumption" column="fuelconsumption" javaType="float" jdbcType="NUMERIC"/>
+        <result property="dailyRent" column="dailyrent" javaType="int" jdbcType="NUMERIC"/>
+        <result property="addPerson" column="nickname" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="addCar" parameterType="com.ncu.car_manage.pojo.Car">
+        insert into car(id,brand,color,sites,fuelconsumption,dailyrent,addperson)
+        values
+        (seq_car.nextval,
+        #{brand,jdbcType=VARCHAR},
+        #{color,jdbcType=VARCHAR},
+        #{sites,jdbcType=NUMERIC},
+        #{fuelConsumption,jdbcType=NUMERIC},
+        #{dailyRent,jdbcType=NUMERIC},
+        #{addPerson,jdbcType=VARCHAR})
+    </insert>
+    <update id="update" parameterType="com.ncu.car_manage.pojo.Car">
+        update car set
+        brand = #{brand,jdbcType=VARCHAR},
+        color = #{color,jdbcType=VARCHAR},
+        sites = #{sites,jdbcType=NUMERIC},
+        fuelconsumption = #{fuelConsumption,jdbcType=NUMERIC},
+        dailyrent = #{dailyRent,jdbcType=NUMERIC},
+        addperson = #{addPerson,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=NUMERIC}
+    </update>
+    <delete id="delete" parameterType="integer">
+        delete from car where id = #{id}
+    </delete>
+    <select id="findAllCar" resultType="com.ncu.car_manage.pojo.Car">
+        select * from car
+    </select>
+    <select id="findCarPage" resultType="com.ncu.car_manage.pojo.Car" parameterType="integer">
+        SELECT *
+
+        FROM (SELECT a.*, ROWNUM rn
+
+        FROM (SELECT *
+
+        FROM car) a
+
+        WHERE ROWNUM &lt;= (#{page}+1)*#{size})
+
+        WHERE rn &gt;= (#{page}*#{size})
+    </select>
+    <select id="findCarById" resultMap="carMap" parameterType="integer">
+        select CAR.id,CAR.brand,CAR.color,CAR.sites,CAR.fuelconsumption,CAR.dailyrent,CAR_USER.nickname from Car,CAR_USER where car.addperson=car_user.username and car.id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/layui/css/layui.css" type="text/css">
+    <link rel="stylesheet" href="/css/myCss.css" type="text/css">
+    <script type="text/javascript" src="/js/jquery-3.4.1.js"></script>
+    <script type="text/javascript" src="/layui/layui.js"></script>
+    <title>注册</title>
+</head>
+<body>
+<div style="width: 600px;margin: 50px auto; padding:50px;border: #0C0C0C 1px solid;border-radius: 10px;">
+    <label style="font-size: 30px;margin: 0 auto;display: block;padding: 9px 15px;width: 80px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: center;">
+        注册
+    </label>
+    <div style="margin: 20px">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" name="accountName" id="accountName" class="layui-input"/>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <div style="margin: 20px">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="accountPwd" id="accountPwd" class="layui-input">
+        </div>
+    </div>
+
+    <div style="margin: 20px">
+        <label class="layui-form-label">确认密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="checkPwd" id="checkPwd" class="layui-input">
+        </div>
+    </div>
+
+    <div style="margin: 20px">
+        <label class="layui-form-label">昵称</label>
+        <div class="layui-input-block">
+            <input type="text" name="nickName" id="nickName" class="layui-input"/>
+        </div>
+    </div>
+
+    <div style="margin: 20px">
+        <label class="layui-form-label">真实姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="realName" id="realName" class="layui-input"/>
+        </div>
+    </div>
+
+    <div style="margin: 20px">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <div class="radio">
+                <input type="radio" id="radio-1" name="sex" value="1" checked/>
+                <label for="radio-1" class="radio-label">男</label>
+            </div>
+            <div class="radio">
+                <input type="radio" id="radio-2" name="sex" value="0"/>
+                <label for="radio-2" class="radio-label">女</label>
+            </div>
+        </div>
+    </div>
+
+    <a href="/carManage/login" class="layui-btn" style="float: right">去登录</a>
+    <button name="registerBtn" id="registerBtn" class="layui-btn" style="float: right;margin-right: 20px">立即注册</button>
+
+</div>
+<script type="text/javascript" th:inline="none">
+    $("#accountName").blur(function () {
+        // 获取用户录入的账户名
+        var userName = $("#accountName").val();
+        var url = "/User/exist/"+userName;
+        // 发送一个get异步请求到后台
+        $.get(url, function (res) {
+            if (res.status === 500) {
+                $("#message").attr("exist", 1).html(res.data).css("color", "red");
+            }
+            if (res.status === 200) {
+                $("#message").attr("exist", 0).html(res.data).css("color", "green");
+            }
+        }, "json");
+    });
+
+
+    // js中  null,underfined,"",0都为false
+    // 其他为true, "fds",12,3,4,true
+    $("#registerBtn").click(function () {
+        var exist = parseInt($("#message").attr("exist"));
+        if (exist) {
+            $("#message").html("请更换账户名!");
+            return;
+        }
+
+        var userName = $("#accountName").val();
+        var password = $("#accountPwd").val();
+        var checkPwd = $("#checkPwd").val();
+        var nickName = $("#nickName").val();
+        var realName = $("#realName").val();
+        var sex = $("input:radio:checked").val();
+
+        var data = {"userName": userName, "password": password,"nickName":nickName,"realName":realName,"sex":sex};
+        if (password===checkPwd){
+            if ($.trim(userName) && $.trim(password)) {
+                // 异步请求
+                $.ajax({
+                    url: "http://127.0.0.1:8088/User/register",
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data), // 传递给后台的数据
+                    dataType: "json", //服务器响应返回的数据类型
+                    // 服务器请求响应成功执行的方法
+                    success: function (res) {
+                        if (res.status === 200) {
+                            alert("注册成功!");
+                            location.href = "login";
+                        }
+                    }
+                });
+            } else {
+                alert("用户名和密码不能为空");
+            }
+        }else {
+            alert("两次密码不一致!");
+        }
+
+    });
+</script>
+</body>
+</html>

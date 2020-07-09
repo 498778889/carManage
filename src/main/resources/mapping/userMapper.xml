@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncu.car_manage.mapper.UserMapper">
+    <resultMap id="accountMap" type="com.ncu.car_manage.pojo.User">
+        <id property="id" column="id" javaType="int" jdbcType="NUMERIC"/>
+        <result property="userName" column="username" javaType="String" jdbcType="VARCHAR"/>
+        <result property="password" column="pwd" javaType="String" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nickname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="realName" column="realname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" javaType="int" jdbcType="NUMERIC"/>
+    </resultMap>
+    <select id="findByUserName" parameterType="string" resultMap="accountMap">
+        select * from CAR_USER
+        where username = #{userName,jdbcType=VARCHAR}
+    </select>
+    <select id="login" resultType="com.ncu.car_manage.pojo.User" parameterType="string">
+        select * from CAR_USER
+        where username = #{userName,jdbcType=VARCHAR} and pwd = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="register" parameterType="com.ncu.car_manage.pojo.User">
+      insert into CAR_USER(id,username,pwd,nickname,realname,sex)
+      values
+      (seq_car_user.nextval,
+       #{userName,jdbcType=VARCHAR},
+       #{password,jdbcType=VARCHAR},
+       #{nickName,jdbcType=VARCHAR},
+       #{realName,jdbcType=VARCHAR},
+       #{sex,jdbcType=NUMERIC})
+    </insert>
+</mapper>

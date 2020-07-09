@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>主页</title>
+    <link rel="stylesheet" href="/layui/css/layui.css" type="text/css">
+    <script type="text/javascript" src="/js/jquery-3.4.1.js"></script>
+
+    <script type="text/javascript" src="/layui/layui.js"></script>
+</head>
+<body class="layui-layout-body">
+<div id="list" class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">汽车信息管理系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="">查看日志</a></li>
+            <li class="layui-nav-item"><a th:href="@{'/carManage/index?userName='+${userName}}">查看汽车信息</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item"><a href="javascript:;"> <span id="userNameSpan" th:text="${userName}"></span> </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a th:href="@{'/carManage/userDetail?userName='+${userName}}">基本资料</a>
+                    </dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/carManage/login">退出</a></li>
+        </ul>
+    </div>
+
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <button onclick="showAddDialog()" class="layui-btn layui-btn-normal">添加</button>
+            <button onclick="deleteSelection()" class="layui-btn layui-btn-primary ">删除选中</button>
+
+            <table id="tb" class="table table-striped table-sm" lay-filter="tb" ></table>
+
+        </div>
+    </div>
+
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 2020 农琛宇 软工1702 8002117068
+    </div>
+
+</div>
+
+
+<script type="text/javascript" th:inline="none">
+    var userNameSpan = jQuery("#userNameSpan").text();
+    var tbCar;
+    jQuery(function () {
+        $ = layui.jquery;
+        layui.use(['form', 'laypage', 'layer', 'table', 'element'], function () {
+
+            var form = layui.form
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+                , element = layui.element; //元素操作
+            table.render({
+                elem: '#tb',
+                height: 312,
+                url: '/car/findCarPage',
+                method: 'post',
+                limit: 4,
+                limits: [4, 8, 12],
+                page: true,
+                cellMinWidth: 10,
+                request: {
+                    pageName: 'page',
+                    limitName: 'size'
+                },
+                response: {
+                    statusName: 'status',
+                    countName: 'count',
+                    dataName: 'data'
+                },
+                cols: [[
+                    {type: 'checkbox', fixed: 'left'},
+                    {field:'id',title:'id'},
+                    {field: 'brand', title: '品牌'},
+                    {field: 'color', title: '颜色'},
+                    {field: 'sites', title: '座位数'},
+                    {field: 'fuelConsumption', title: '日租金(元)'},
+                    {field: 'dailyRent', title: '百公里耗油(升/百公里)',minWidth: 200,width:200},
+                    {field: 'addPerson', title: '添加人'},
+                    {
+                        fixed: 'right', title: '操作', width: 150,
+                        templet: function (data) {
+                            return "<button onclick='checkCarDetail(" + data.id + ")' title='查看' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe60b;</icon></button>" +
+                                "<button onclick='showUpdateDialog(" + data.id+")' title='编辑' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe642;</icon></button>" +
+                                "<button onclick='deleteCar(" + data.id + ")' title='删除' class='layui-btn layui-bg-red layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></button>";
+                        }
+                    }
+                ]],
+                done: function (res, curr, count) {
+                    console.log("表格渲染完成：");
+                    console.log(res);
+                    console.log(curr);
+                    console.log(count);
+                }
+            });
+            tbCar = table;
+            table.on('checkbox(tb)', function(obj){
+                console.log(obj.checked); //当前是否选中状态
+                console.log(obj.data); //选中行的相关数据
+                console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+                console.log(table.checkStatus('tb').data[0].id); // 获取表格中选中行的数据
+                console.log(table.checkStatus('tb').data.length); // 获取表格中选中行的数据
+            });
+        });
+    });
+
+    function changeValue(obj) {
+        jQuery(obj).attr("value", $(obj).val());
+    }
+
+    function showAddDialog() {
+        layer.open({
+            type: 1,
+            title:"添加汽车信息",
+            shadeClose: true, //点击遮罩关闭层
+            maxmin: true,
+            area:['500px','300px'],
+            skin: 'layui-layer-lan',
+            btn:'确认添加',
+            content:"<div id=\"addCar\" class=\"layui-form\">\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"brand\">品牌</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"brand\" name=\"brand\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"color\">颜色</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"color\" name=\"color\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"sites\">座位数</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"sites\" name=\"sites\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"dailyRent\">日租金(元)</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"dailyRent\" name=\"dailyRent\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"fuelConsumption\">百公里耗油(升/百公里)</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"fuelConsumption\" name=\"fuelConsumption\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "            </div>",
+            yes:function () {
+                var brand = jQuery("#brand").val();
+                var color = jQuery("#color").val();
+                var sites = jQuery("#sites").val();
+                var dailyRent = jQuery("#dailyRent").val();
+                var fuelConsumption = jQuery("#fuelConsumption").val();
+                var addPerson = jQuery("#userNameSpan").text();
+                var data = {
+                    "brand": brand,
+                    "color": color,
+                    "sites": sites,
+                    "dailyRent": dailyRent,
+                    "fuelConsumption": fuelConsumption,
+                    "addPerson": addPerson
+                };
+                jQuery.ajax({
+                    url: "http://127.0.0.1:8088/car/add",
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data), // 传递给后台的数据
+                    dataType: "json", //服务器响应返回的数据类型
+                    // 服务器请求响应成功执行的方法
+                    success: function (res) {
+                        if (res.status === 200) {
+                            alert("上传成功!");
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function showUpdateDialog(id) {
+        layer.open({
+            type: 1,
+            title:"修改汽车信息",
+            shadeClose: true, //点击遮罩关闭层
+            maxmin: true,
+            area:['500px','300px'],
+            skin: 'layui-layer-lan',
+            btn:'确认修改',
+            success:function(layero,index){
+                jQuery.ajax({
+                    url: "http://127.0.0.1:8088/car/findCar?id="+id,
+                    type: "get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json", //服务器响应返回的数据类型
+                    // 服务器请求响应成功执行的方法
+                    success: function (res) {
+                        if (res.status === 200) {
+                            jQuery("#updateBrand").val(res.data.brand);
+                            jQuery("#updateColor").val(res.data.color);
+                            jQuery("#updateSites").val(res.data.sites);
+                            jQuery("#updateDailyRent").val(res.data.dailyRent);
+                            jQuery("#updateFuelConsumption").val(res.data.fuelConsumption);
+                            jQuery("#updateAddPerson").val(res.data.addPerson);
+                        }
+                    }
+                });
+            },
+            content:"<div id=\"updateCar\" class=\"layer_form\">\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label>品牌</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateBrand\" name=\"updateBrand\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label>颜色</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateColor\" name=\"updateColor\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label>座位数</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateSites\" name=\"updateSites\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label>日租金(元)</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateDailyRent\" name=\"updateDailyRent\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label>百公里耗油(升/百公里)</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateFuelConsumption\" name=\"updateFuelConsumption\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\" >\n" +
+                "                    <label>上传人</label>\n" +
+                "                    <div class=\"form_item_input\">\n" +
+                "                        <input type=\"text\" id=\"updateAddPerson\" name=\"updateAddPerson\" onchange=\"changeValue(this)\" >\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "            </div>",
+            yes:function () {
+                var brand = jQuery("#updateBrand").val();
+                var color = jQuery("#updateColor").val();
+                var sites = jQuery("#updateSites").val();
+                var dailyRent = jQuery("#updateDailyRent").val();
+                var fuelConsumption = jQuery("#updateFuelConsumption").val();
+                var addPerson = jQuery("#updateAddPerson").val();
+                var data = {
+                    "id": id,
+                    "brand": brand,
+                    "color": color,
+                    "sites": sites,
+                    "dailyRent": dailyRent,
+                    "fuelConsumption": fuelConsumption,
+                    "addPerson": addPerson
+                };
+                jQuery.ajax({
+                    url: "http://127.0.0.1:8088/car/update",
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data), // 传递给后台的数据
+                    dataType: "json", //服务器响应返回的数据类型
+                    // 服务器请求响应成功执行的方法
+                    success: function (res) {
+                        if (res.status === 200) {
+                            alert("修改成功!");
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function deleteCar(id) {
+        var url = "/car/delete?id="+id;
+        var r = confirm("是否确认删除？");
+        if (r === true) {
+            jQuery.get(url,function (res) {
+                if (res.status===200){
+                    alert(res.data);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
+    function checkCarDetail(id) {
+        location.href = "/carManage/carDetail/" + id.toString();
+    }
+
+    function deleteSelection() {
+        var r = confirm("是否确认删除？");
+        var st =true;
+        if (r === true) {
+            for (var d =0; d<tbCar.checkStatus('tb').data.length;d++){
+
+                var url = "/car/delete?id="+tbCar.checkStatus('tb').data[d].id;
+                jQuery.get(url,function (res) {
+                    if (res.status!==200){
+                        st=false;
+                    }
+                });
+            }
+            if (st===true){
+                alert("删除成功!");
+                window.location.reload();
+            }else {
+                alert("删除失败!");
+            }
+        }
+    }
+</script>
+</body>
+</html>

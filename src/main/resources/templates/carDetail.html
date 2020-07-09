@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>详细信息</title>
+</head>
+<body>
+    <label>品牌</label><span th:text="${car.getBrand()}"></span><br/>
+    <label>颜色</label><span th:text="${car.getColor()}"></span><br/>
+    <label>座位数</label><span th:text="${car.getSites()}"></span><br/>
+    <label>日租金(元)</label><span th:text="${car.getDailyRent()}"></span><br/>
+    <label>百公里耗油(升/百公里)</label><span th:text="${car.getFuelConsumption()}"></span><br/>
+    <label>添加人</label><span th:text="${car.getAddPerson()}"></span><br/>
+</body>
+</html>
