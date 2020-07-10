@@ -1,5 +1,6 @@
 package com.ncu.car_manage.controller;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ncu.car_manage.pojo.Car;
 import com.ncu.car_manage.service.CarService;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/car")
@@ -73,18 +75,41 @@ public class CarController {
     @PostMapping("/findCarPage")
     @ResponseBody
     public JsonResult findCarPage(@RequestParam(required = false,defaultValue = "1")int page,
-                                  @RequestParam(required = false,defaultValue = "4")int size){
-        PageInfo<Car> carList = carService.findAll(page, size);
-
-        if (carList!=null){
-            return JsonResult.OK(carList.getList(),carList.getTotal());
+                                  @RequestParam(required = false, defaultValue = "4") int size,
+                                  @RequestParam(required = false) String brand,
+                                  @RequestParam(required = false) String color,
+                                  @RequestParam(required = false) String date) {
+        PageInfo<Car> carList;
+        PageHelper.startPage(page, size);
+        if (Objects.equals(brand, "")) {
+            brand = null;
         }
-        return JsonResult.ERROR("查询不到数据!");
+        if (Objects.equals(color, "")) {
+            color = null;
+        }
+        if (Objects.equals(date, "")) {
+            date = null;
+        }
+        if ((brand != null) || (color != null) || (date != null)) {
+            carList = new PageInfo<>(carService.selectBySelective(brand, color, date));
+        } else {
+            carList = new PageInfo<>(carService.findAll());
+        }
+        return JsonResult.OK(carList.getList(), carList.getTotal());
     }
     @GetMapping("/findCar")
     public JsonResult findCar(String id){
         Car car = carService.findCarById(Integer.parseInt(id));
         if (car!=null){
+            return JsonResult.OK(car);
+        }
+        return JsonResult.ERROR("查询不到数据!");
+    }
+
+    @GetMapping("/findCar2")
+    public JsonResult findCar2(String id) {
+        Car car = carService.findCarById2(Integer.parseInt(id));
+        if (car != null) {
             return JsonResult.OK(car);
         }
         return JsonResult.ERROR("查询不到数据!");

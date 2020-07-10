@@ -15,7 +15,15 @@
     where ID = #{id,jdbcType=DECIMAL}
   </select>
   <select id="selectAll" resultType="com.ncu.car_manage.pojo.CarBrand">
-    select * from CAR_BRAND order by ID;
+    select *
+    from CAR_BRAND
+    order by ID
+  </select>
+  <select id="selectByName" resultType="com.ncu.car_manage.pojo.CarBrand">
+    select *
+    from CAR_BRAND
+    where BRAND like '%' || #{brand} || '%'
+    order by ID
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal">
     delete from CAR_BRAND

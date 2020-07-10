@@ -19,7 +19,8 @@
             <li class="layui-nav-item"><a th:href="@{'/carManage/brandDetail?userName='+${userName}}">汽车品牌管理</a></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item"><a href="javascript:;"> <span id="userNameSpan" th:text="${userName}"></span> </a>
+            <li class="layui-nav-item"><a href="javascript:;"> <span id="userNameSpan" th:text="${userName}"></span>
+            </a>
                 <dl class="layui-nav-child">
                     <dd>
                         <a th:href="@{'/carManage/userDetail?userName='+${userName}}">基本资料</a>
@@ -34,11 +35,61 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-            <button onclick="showAddDialog()" class="layui-btn layui-btn-normal">添加</button>
-            <button onclick="deleteSelection()" class="layui-btn layui-btn-primary ">删除选中</button>
 
-            <table id="tb" class="table table-striped table-sm" lay-filter="tb" ></table>
-
+            <div class="layui-form"
+                 style="width: 1350px;border: #0C0C0C 1px solid;border-radius: 10px;padding-right: 50px">
+                <label class="layui-form-label" style="font-size: 30px">搜索</label>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">品牌名</label>
+                    <div class="layui-input-block">
+                        <input autocomplete="off" class="layui-input" id="brandSearch" name="brand" placeholder="请输入品牌名"
+                               type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">颜色</label>
+                    <div class="layui-input-block">
+                        <input autocomplete="off" class="layui-input" id="colorSearch" name="color" placeholder="请输入颜色"
+                               type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">日期</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" id="yearSearch" name="year" placeholder="请输入年份"
+                               type="number">
+                    </div>
+                    <label class="layui-form-label">年</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" id="monthSearch" name="month" placeholder="请输入月份"
+                               type="number">
+                    </div>
+                    <label class="layui-form-label">月</label>
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" class="layui-input" id="daySearch" name="day" placeholder="请输入日期"
+                               type="number">
+                    </div>
+                    <label class="layui-form-label">日</label>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" onclick="search()">
+                            <i class="layui-icon layui-icon-search"></i>
+                            搜索
+                        </button>
+                        <button class="layui-btn layui-btn-primary" onclick="reset()">重置</button>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-sm" id="tb" lay-filter="tb"></table>
+            <button class="layui-btn layui-btn-normal" onclick="showAddDialog()">
+                <i class="layui-icon layui-icon-addition"></i>
+                添加汽车信息
+            </button>
+            <button class="layui-btn layui-btn-primary " onclick="deleteSelection()">
+                <i class="layui-icon layui-icon-subtraction"></i>
+                删除选中
+            </button>
         </div>
     </div>
 
@@ -72,6 +123,7 @@
                 limits: [4, 8, 12],
                 page: true,
                 cellMinWidth: 10,
+                width: 1400,
                 request: {
                     pageName: 'page',
                     limitName: 'size'
@@ -83,32 +135,37 @@
                 },
                 cols: [[
                     {type: 'checkbox', fixed: 'left'},
-                    {field:'id',title:'id'},
+                    {field: 'id', title: 'id', sort: true},
                     {field: 'brand', title: '品牌'},
                     {field: 'color', title: '颜色'},
                     {field: 'sites', title: '座位数'},
-                    {field: 'fuelConsumption', title: '日租金(元)'},
-                    {field: 'dailyRent', title: '百公里耗油(升/百公里)',minWidth: 200,width:200},
-                    {field: 'addTime', title: '添加时间'},
+                    {field: 'productionDate', title: '出厂日期'},
+                    {field: 'fuelConsumption', title: '日租金(元)', sort: true, minWidth: 120, width: 120},
+                    {field: 'dailyRent', title: '百公里耗油(升/百公里)', minWidth: 180, width: 180},
+                    {
+                        field: 'addTime', title: '添加时间', sort: true, minWidth: 120, width: 120, templet: function (d) {
+                            return layui.util.toDateString(d.addTime, 'yyyy-MM-dd');
+                        }
+                    },
                     {field: 'addPerson', title: '添加人'},
                     {
                         fixed: 'right', title: '操作', width: 150,
                         templet: function (data) {
                             return "<button onclick='checkCarDetail(" + data.id + ")' title='查看' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe60b;</icon></button>" +
-                                "<button onclick='showUpdateDialog(" + data.id+")' title='编辑' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe642;</icon></button>" +
+                                "<button onclick='showUpdateDialog(" + data.id + ")' title='编辑' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe642;</icon></button>" +
                                 "<button onclick='deleteCar(" + data.id + ")' title='删除' class='layui-btn layui-bg-red layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></button>";
                         }
                     }
                 ]],
                 done: function (res, curr, count) {
                     console.log("表格渲染完成：");
-                    console.log(res);
+                    console.log(res.data);
                     console.log(curr);
                     console.log(count);
                 }
             });
             tbCar = table;
-            table.on('checkbox(tb)', function(obj){
+            table.on('checkbox(tb)', function (obj) {
                 console.log(obj.checked); //当前是否选中状态
                 console.log(obj.data); //选中行的相关数据
                 console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
@@ -119,69 +176,96 @@
     });
 
     function changeValue(obj) {
-        jQuery(obj).attr("value", $(obj).val());
+        jQuery(obj).attr("value", jQuery(obj).val());
     }
 
     function showAddDialog() {
+        var form = layui.form;
         layer.open({
             type: 1,
-            title:"添加汽车信息",
+            title: "添加汽车信息",
             shadeClose: true, //点击遮罩关闭层
             maxmin: true,
-            area:['500px','300px'],
+            area: ['500px', '300px'],
             skin: 'layui-layer-lan',
-            btn:'确认添加',
-            content:"<div id=\"addCar\" class=\"layui-form\">\n" +
+            btn: '确认添加',
+            success: function (layero, index) {
+                jQuery.ajax({
+                    url: "http://127.0.0.1:8088/brand/findAllBrand",
+                    type: "get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json", //服务器响应返回的数据类型
+                    // 服务器请求响应成功执行的方法
+                    success: function (res) {
+                        if (res.status === 200) {
+                            for (var i = 0; i < res.data.length; i++) {
+                                jQuery("#brand").append("<option>" + res.data[i].brand + "</option>");
+                            }
+                            form.render('select');
+                        }
+                    }
+                });
+            },
+            content: "<div id=\"addCar\" class=\"layui-form\">\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label for=\"brand\">品牌</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"brand\" name=\"brand\" onchange=\"changeValue(this)\">\n" +
+                "                    <label for=\"brand\" class=\"layui-form-label\">品牌</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <select id=\"brand\" name=\"brand\" class=\"layui-select\"></select>\n" +
                 "                    </div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label for=\"color\">颜色</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"color\" name=\"color\" onchange=\"changeValue(this)\">\n" +
+                "                    <label for=\"color\" class=\"layui-form-label\">颜色</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"text\" id=\"color\" name=\"color\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label for=\"sites\">座位数</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"sites\" name=\"sites\" onchange=\"changeValue(this)\">\n" +
+                "                    <label for=\"sites\" class=\"layui-form-label\">座位数</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"number\" id=\"sites\" name=\"sites\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label for=\"dailyRent\">日租金(元)</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"dailyRent\" name=\"dailyRent\" onchange=\"changeValue(this)\">\n" +
+                "                    <label class=\"layui-form-label\">出厂日期</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"date\" id=\"addProductionDate\" name=\"addProductionDate\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label for=\"fuelConsumption\">百公里耗油(升/百公里)</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"fuelConsumption\" name=\"fuelConsumption\" onchange=\"changeValue(this)\">\n" +
+                "                    <label for=\"dailyRent\" class=\"layui-form-label\">日租金(元)</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"number\" id=\"dailyRent\" name=\"dailyRent\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label for=\"fuelConsumption\" class=\"layui-form-label\">百公里耗油(升/百公里)</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"text\" id=\"fuelConsumption\" name=\"fuelConsumption\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "            </div>",
-            yes:function () {
-                var brand = jQuery("#brand").val();
+            yes: function () {
+                var brand = layui.$("select[name='brand']").val();
                 var color = jQuery("#color").val();
                 var sites = jQuery("#sites").val();
                 var dailyRent = jQuery("#dailyRent").val();
                 var fuelConsumption = jQuery("#fuelConsumption").val();
                 var addPerson = jQuery("#userNameSpan").text();
+                var productionDate = jQuery("#addProductionDate").val();
+                console.log(productionDate);
                 var data = {
                     "brand": brand,
                     "color": color,
                     "sites": sites,
+                    "productionDate": productionDate,
                     "dailyRent": dailyRent,
                     "fuelConsumption": fuelConsumption,
                     "addPerson": addPerson
                 };
                 jQuery.ajax({
-                    url: "http://127.0.0.1:8088/car/add?userName="+userNameSpan,
+                    url: "http://127.0.0.1:8088/car/add?userName=" + userNameSpan,
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     data: JSON.stringify(data), // 传递给后台的数据
@@ -201,15 +285,15 @@
     function showUpdateDialog(id) {
         layer.open({
             type: 1,
-            title:"修改汽车信息",
+            title: "修改汽车信息",
             shadeClose: true, //点击遮罩关闭层
             maxmin: true,
-            area:['500px','300px'],
+            area: ['500px', '300px'],
             skin: 'layui-layer-lan',
-            btn:'确认修改',
-            success:function(layero,index){
+            btn: '确认修改',
+            success: function (layero, index) {
                 jQuery.ajax({
-                    url: "http://127.0.0.1:8088/car/findCar?id="+id,
+                    url: "http://127.0.0.1:8088/car/findCar2?id=" + id,
                     type: "get",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json", //服务器响应返回的数据类型
@@ -220,70 +304,80 @@
                             jQuery("#updateColor").val(res.data.color);
                             jQuery("#updateSites").val(res.data.sites);
                             jQuery("#updateDailyRent").val(res.data.dailyRent);
+                            jQuery("#updateProductionDate").val(res.data.productionDate);
                             jQuery("#updateFuelConsumption").val(res.data.fuelConsumption);
                             jQuery("#updateAddPerson").val(res.data.addPerson);
                         }
                     }
                 });
             },
-            content:"<div id=\"updateCar\" class=\"layer_form\">\n" +
-                "                <div class=\"layui-form-item\">\n" +
-                "                    <label>品牌</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateBrand\" name=\"updateBrand\" onchange=\"changeValue(this)\">\n" +
+            content: "<div id=\"updateCar\" class=\"layer_form\">\n" +
+                "                <div class=\"layui-form-item\" hidden>\n" +
+                "                    <label class=\"layui-form-label\">品牌</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"text\" id=\"updateBrand\" name=\"updateBrand\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label>颜色</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateColor\" name=\"updateColor\" onchange=\"changeValue(this)\">\n" +
+                "                    <label class=\"layui-form-label\">颜色</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"text\" id=\"updateColor\" name=\"updateColor\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label>座位数</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateSites\" name=\"updateSites\" onchange=\"changeValue(this)\">\n" +
+                "                    <label class=\"layui-form-label\">座位数</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"number\" id=\"updateSites\" name=\"updateSites\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label>日租金(元)</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateDailyRent\" name=\"updateDailyRent\" onchange=\"changeValue(this)\">\n" +
+                "                    <label class=\"layui-form-label\">出厂日期</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"date\" id=\"updateProductionDate\" name=\"addProductionDate\" class=\"layui-input\" placeholder=\"请输入年份\" autocomplete=\"off\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "                <div class=\"layui-form-item\">\n" +
-                "                    <label>百公里耗油(升/百公里)</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateFuelConsumption\" name=\"updateFuelConsumption\" onchange=\"changeValue(this)\">\n" +
+                "                    <label class=\"layui-form-label\">日租金(元)</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"number\" id=\"updateDailyRent\" name=\"updateDailyRent\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
-                "                <div class=\"layui-form-item\" >\n" +
-                "                    <label>上传人</label>\n" +
-                "                    <div class=\"form_item_input\">\n" +
-                "                        <input type=\"text\" id=\"updateAddPerson\" name=\"updateAddPerson\" onchange=\"changeValue(this)\" >\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label class=\"layui-form-label\">百公里耗油(升/百公里)</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"number\" id=\"updateFuelConsumption\" name=\"updateFuelConsumption\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "                <div class=\"layui-form-item\" hidden>\n" +
+                "                    <label class=\"layui-form-label\">上传人</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <input type=\"text\" id=\"updateAddPerson\" name=\"updateAddPerson\" class=\"layui-input\" onchange=\"changeValue(this)\" >\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "            </div>",
-            yes:function () {
+            yes: function () {
                 var brand = jQuery("#updateBrand").val();
                 var color = jQuery("#updateColor").val();
                 var sites = jQuery("#updateSites").val();
                 var dailyRent = jQuery("#updateDailyRent").val();
                 var fuelConsumption = jQuery("#updateFuelConsumption").val();
                 var addPerson = jQuery("#updateAddPerson").val();
+                var productionDate = jQuery("#updateProductionDate").val();
+                console.log(productionDate);
                 var data = {
                     "id": id,
                     "brand": brand,
                     "color": color,
                     "sites": sites,
                     "dailyRent": dailyRent,
+                    "productionDate": productionDate,
                     "fuelConsumption": fuelConsumption,
                     "addPerson": addPerson
                 };
                 jQuery.ajax({
-                    url: "http://127.0.0.1:8088/car/update?userName="+userNameSpan,
+                    url: "http://127.0.0.1:8088/car/update?userName=" + userNameSpan,
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     data: JSON.stringify(data), // 传递给后台的数据
@@ -301,11 +395,11 @@
     }
 
     function deleteCar(id) {
-        var url = "/car/delete?id="+id+"&userName="+userNameSpan;
+        var url = "/car/delete?id=" + id + "&userName=" + userNameSpan;
         var r = confirm("是否确认删除？");
         if (r === true) {
-            jQuery.get(url,function (res) {
-                if (res.status===200){
+            jQuery.get(url, function (res) {
+                if (res.status === 200) {
                     alert(res.data);
                     window.location.reload();
                 }
@@ -314,26 +408,61 @@
     }
 
     function checkCarDetail(id) {
-        location.href = "/carManage/carDetail/" + id.toString()+"?userName="+userNameSpan;
+        location.href = "/carManage/carDetail/" + id.toString() + "?userName=" + userNameSpan;
+    }
+
+    function search() {
+        var brand = jQuery("#brandSearch").val();
+        var color = jQuery("#colorSearch").val();
+        var year = jQuery("#yearSearch").val();
+        var month = jQuery("#monthSearch").val();
+        var day = jQuery("#daySearch").val();
+        var date = null;
+        if (brand === "") {
+            brand = null;
+        }
+        if (color === "") {
+            color = null;
+        }
+        if (year === "") {
+            year = null;
+        }
+        if (month === "") {
+            month = null;
+        }
+        if (day === "") {
+            day = null;
+        }
+        if (year != null && month != null && day != null) {
+            date = year + "-" + month + "-" + day;
+        }
+        tbCar.reload('tb', {
+            method: 'post',
+            where: {
+                'brand': brand,
+                'color': color,
+                'date': date
+            }
+        });
     }
 
     function deleteSelection() {
         var r = confirm("是否确认删除？");
-        var st =true;
+        var st = true;
         if (r === true) {
-            for (var d =0; d<tbCar.checkStatus('tb').data.length;d++){
+            for (var d = 0; d < tbCar.checkStatus('tb').data.length; d++) {
 
-                var url = "/car/delete?id="+tbCar.checkStatus('tb').data[d].id+"&userName="+userNameSpan;
-                jQuery.get(url,function (res) {
-                    if (res.status!==200){
-                        st=false;
+                var url = "/car/delete?id=" + tbCar.checkStatus('tb').data[d].id + "&userName=" + userNameSpan;
+                jQuery.get(url, function (res) {
+                    if (res.status !== 200) {
+                        st = false;
                     }
                 });
             }
-            if (st===true){
+            if (st === true) {
                 alert("删除成功!");
                 window.location.reload();
-            }else {
+            } else {
                 alert("删除失败!");
             }
         }

@@ -16,8 +16,10 @@
     from CAR_RECORD
     where ID = #{id,jdbcType=DECIMAL}
   </select>
-  <select id="selectAll" resultType="com.ncu.car_manage.pojo.CarRecord">
-    select  * from CAR_RECORD order by ID
+  <select id="selectAll" resultMap="BaseResultMap">
+    select *
+    from CAR_RECORD
+    order by ID desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal">
     delete from CAR_RECORD

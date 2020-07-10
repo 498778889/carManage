@@ -30,7 +30,25 @@
     </div>
     <div class="layui-body">
         <div style="padding: 15px;">
+            <button class="layui-btn layui-btn-primary " onclick="deleteSelection()">删除选中</button>
+            <table class="table table-striped table-sm" id="tb" lay-filter="tb"></table>
 
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">品牌名</label>
+                    <div class="layui-input-block">
+                        <input autocomplete="off" class="layui-input" id="brandName" name="brand" placeholder="请输入品牌名"
+                               type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" onclick="addBrand()">添加品牌</button>
+                        <button class="layui-btn" onclick="searchBrand()">搜索品牌</button>
+                        <button class="layui-btn layui-btn-primary" onclick="reset()">重置</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="layui-footer">
@@ -38,6 +56,124 @@
         © 2020 农琛宇 软工1702 8002117068
     </div>
 </div>
-<script type="text/javascript" th:inline="none"></script>
+<script th:inline="none" type="text/javascript">
+    var userNameSpan = jQuery("#userNameSpan").text();
+    var tbCar;
+    jQuery(function () {
+        $ = layui.jquery;
+        layui.use(['form', 'laypage', 'layer', 'table', 'element'], function () {
+
+            var form = layui.form
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+                , element = layui.element; //元素操作
+            table.render({
+                elem: '#tb',
+                height: 500,
+                url: '/brand/findBrandPage',
+                method: 'post',
+                limit: 10,
+                limits: [10, 20, 30],
+                page: true,
+                cellMinWidth: 10,
+                request: {
+                    pageName: 'page',
+                    limitName: 'size'
+                },
+                response: {
+                    statusName: 'status',
+                    countName: 'count',
+                    dataName: 'data'
+                },
+                cols: [[
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: 'id', sort: true},
+                    {field: 'brand', title: '品牌'},
+                    {
+                        fixed: 'right', title: '操作', width: 150,
+                        templet: function (data) {
+                            return "<button onclick='deleteCar(" + data.id + ")' title='删除' class='layui-btn layui-bg-red layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></button>";
+                        }
+                    }
+                ]],
+                done: function (res, curr, count) {
+                    console.log("表格渲染完成：");
+                    console.log(res.data);
+                    console.log(curr);
+                    console.log(count);
+                }
+            });
+            tbCar = table;
+            table.on('checkbox(tb)', function (obj) {
+                console.log(obj.checked); //当前是否选中状态
+                console.log(obj.data); //选中行的相关数据
+                console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+                console.log(table.checkStatus('tb').data[0].id); // 获取表格中选中行的数据
+                console.log(table.checkStatus('tb').data.length); // 获取表格中选中行的数据
+            });
+        });
+    });
+
+    function reset() {
+        jQuery("#brandName").val("");
+    }
+
+    function searchBrand() {
+        var brand = jQuery("#brandName").val();
+        tbCar.reload('tb', {
+            method: 'post',
+            where: {
+                'brand': brand
+            }
+        });
+    }
+
+    function addBrand() {
+        var brand = jQuery("#brandName").val();
+        var url = "/brand/addBrand?brand=" + brand + "&userName=" + userNameSpan;
+        jQuery.get(url, function (res) {
+            if (res.status === 200) {
+                alert(res.data);
+                window.location.reload();
+            }
+        });
+    }
+
+    function deleteCar(id) {
+        var url = "/brand/deleteBrand?id=" + id + "&userName=" + userNameSpan;
+        var r = confirm("是否确认删除？");
+        if (r === true) {
+            jQuery.get(url, function (res) {
+                if (res.status === 200) {
+                    alert(res.data);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
+    function deleteSelection() {
+        var r = confirm("是否确认删除？");
+        var st = true;
+        if (r === true) {
+            for (var d = 0; d < tbCar.checkStatus('tb').data.length; d++) {
+
+                var url = "/brand/deleteBrand?id=" + tbCar.checkStatus('tb').data[d].id + "&userName=" + userNameSpan;
+                jQuery.get(url, function (res) {
+                    if (res.status !== 200) {
+                        st = false;
+                    }
+                });
+            }
+            if (st === true) {
+                alert("删除成功!");
+                window.location.reload();
+            } else {
+                alert("删除失败!");
+            }
+        }
+    }
+</script>
 </body>
 </html>

@@ -5,10 +5,12 @@ import com.ncu.car_manage.pojo.CarRecord;
 import com.ncu.car_manage.service.CarRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Transactional
 @Service
 public class CarRecordServiceImpl implements CarRecordService {
     @Autowired
@@ -21,7 +23,8 @@ public class CarRecordServiceImpl implements CarRecordService {
 
     @Override
     public List<CarRecord> findAll() {
-        return carRecordmapper.selectAll();
+        List<CarRecord> list = carRecordmapper.selectAll();
+        return list;
     }
 
     @Override

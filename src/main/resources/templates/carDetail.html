@@ -34,6 +34,14 @@
                 <tbody>
                 <tr>
                     <td>
+                        <label>id</label>
+                    </td>
+                    <td>
+                        <span th:text="${car.getId()}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <label>品牌</label>
                     </td>
                     <td>
@@ -54,6 +62,14 @@
                     </td>
                     <td>
                         <span th:text="${car.getSites()}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>出厂日期</label>
+                    </td>
+                    <td>
+                        <span th:text="${car.getProductionDate()}"></span>
                     </td>
                 </tr>
                 <tr>

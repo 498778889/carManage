@@ -13,5 +13,6 @@ public class Car {
     float fuelConsumption;
     int dailyRent;
     String addPerson;
+    String productionDate;
     Date addTime;
 }

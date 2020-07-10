@@ -12,7 +12,10 @@ public interface CarMapper {
     List<Car> findCarPage(@Param("page") int page, @Param("size")int size);
     Car findCarById(int id);
 
+    Car findCarById2(int id);
     int addCar(Car car);
     int delete(int id);
     int update(Car car);
+
+    List<Car> selectBySelective(@Param("brand") String brand, @Param("color") String color, @Param("date") String date);
 }

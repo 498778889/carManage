@@ -1,15 +1,15 @@
 package com.ncu.car_manage.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.ncu.car_manage.mapper.CarMapper;
 import com.ncu.car_manage.pojo.Car;
 import com.ncu.car_manage.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class CarServiceImpl implements CarService {
     @Autowired
@@ -21,6 +21,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public List<Car> selectBySelective(String brand, String color, String date) {
+        return carMapper.selectBySelective(brand, color, date);
+    }
+
+    @Override
     public List<Car> findCarPage(int page, int size) {
         return carMapper.findCarPage(page,size);
     }
@@ -28,6 +33,11 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car findCarById(int id) {
         return carMapper.findCarById(id);
+    }
+
+    @Override
+    public Car findCarById2(int id) {
+        return carMapper.findCarById2(id);
     }
 
     @Override
@@ -51,8 +61,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public PageInfo<Car> findAll(int page, int size) {
-        PageHelper.startPage(page, size);
-        return new PageInfo<>(carMapper.findAllCar());
+    public List<Car> findAll() {
+        return carMapper.findAllCar();
     }
 }

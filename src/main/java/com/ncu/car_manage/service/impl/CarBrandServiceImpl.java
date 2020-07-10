@@ -1,16 +1,16 @@
 package com.ncu.car_manage.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.ncu.car_manage.mapper.CarBrandmapper;
 import com.ncu.car_manage.pojo.CarBrand;
 import com.ncu.car_manage.service.CarBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Transactional
 @Service
 public class CarBrandServiceImpl implements CarBrandService {
     @Autowired
@@ -27,10 +27,15 @@ public class CarBrandServiceImpl implements CarBrandService {
     }
 
     @Override
-    public PageInfo<CarBrand> findAllBrand(int page, int size) {
-        PageHelper.startPage(page, size);
-        return new PageInfo<>(carBrandmapper.selectAll());
+    public List<CarBrand> findAllBrand() {
+        return carBrandmapper.selectAll();
     }
+
+    @Override
+    public List<CarBrand> findBrandByName(String brand) {
+        return carBrandmapper.selectByName(brand);
+    }
+
 
     @Override
     public CarBrand findBrandById(BigDecimal id) {

@@ -9,51 +9,107 @@
         <result property="fuelConsumption" column="fuelconsumption" javaType="float" jdbcType="NUMERIC"/>
         <result property="dailyRent" column="dailyrent" javaType="int" jdbcType="NUMERIC"/>
         <result property="addPerson" column="nickname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="productionDate" column="productionDate" jdbcType="VARCHAR"/>
+        <result property="addTime" column="addtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="carMap2" type="com.ncu.car_manage.pojo.Car">
+        <id property="id" column="id" javaType="int" jdbcType="NUMERIC"/>
+        <result property="brand" column="brand" javaType="String" jdbcType="VARCHAR"/>
+        <result property="color" column="color" javaType="String" jdbcType="VARCHAR"/>
+        <result property="sites" column="sites" javaType="int" jdbcType="NUMERIC"/>
+        <result property="fuelConsumption" column="fuelconsumption" javaType="float" jdbcType="NUMERIC"/>
+        <result property="dailyRent" column="dailyrent" javaType="int" jdbcType="NUMERIC"/>
+        <result property="addPerson" column="username" jdbcType="VARCHAR"/>
+        <result property="productionDate" column="productionDate" jdbcType="VARCHAR"/>
         <result property="addTime" column="addtime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <insert id="addCar" parameterType="com.ncu.car_manage.pojo.Car">
-        insert into car(id,brand,color,sites,fuelconsumption,dailyrent,addperson,addTime)
-        values
-        (seq_car.nextval,
-        #{brand,jdbcType=VARCHAR},
-        #{color,jdbcType=VARCHAR},
-        #{sites,jdbcType=NUMERIC},
-        #{fuelConsumption,jdbcType=NUMERIC},
-        #{dailyRent,jdbcType=NUMERIC},
-        #{addPerson,jdbcType=VARCHAR},
-         sysdate)
+        insert into car(id, brand, color, sites, fuelconsumption, dailyrent, addperson, addTime, PRODUCTIONDATE)
+        values (seq_car.nextval,
+                #{brand,jdbcType=VARCHAR},
+                #{color,jdbcType=VARCHAR},
+                #{sites,jdbcType=NUMERIC},
+                #{fuelConsumption,jdbcType=NUMERIC},
+                #{dailyRent,jdbcType=NUMERIC},
+                #{addPerson,jdbcType=VARCHAR},
+                sysdate,
+                #{productionDate,jdbcType=VARCHAR})
     </insert>
     <update id="update" parameterType="com.ncu.car_manage.pojo.Car">
-        update car set
-        brand = #{brand,jdbcType=VARCHAR},
-        color = #{color,jdbcType=VARCHAR},
-        sites = #{sites,jdbcType=NUMERIC},
-        fuelconsumption = #{fuelConsumption,jdbcType=NUMERIC},
-        dailyrent = #{dailyRent,jdbcType=NUMERIC},
-        addperson = #{addPerson,jdbcType=VARCHAR}
+        update car
+        set brand           = #{brand,jdbcType=VARCHAR},
+            color           = #{color,jdbcType=VARCHAR},
+            sites           = #{sites,jdbcType=NUMERIC},
+            fuelconsumption = #{fuelConsumption,jdbcType=NUMERIC},
+            dailyrent       = #{dailyRent,jdbcType=NUMERIC},
+            PRODUCTIONDATE  = #{productionDate,jdbcType=VARCHAR},
+            addperson       = #{addPerson,jdbcType=VARCHAR}
         where id = #{id,jdbcType=NUMERIC}
     </update>
     <delete id="delete" parameterType="integer">
-        delete from car where id = #{id}
+        delete
+        from car
+        where id = #{id}
     </delete>
     <select id="findAllCar" resultType="com.ncu.car_manage.pojo.Car">
-        select * from car order by ID
+        select *
+        from car
+        order by ID
     </select>
     <select id="findCarPage" resultType="com.ncu.car_manage.pojo.Car" parameterType="integer">
         SELECT *
 
         FROM (SELECT a.*, ROWNUM rn
 
-        FROM (SELECT *
+              FROM (SELECT *
 
-        FROM car) a
+                    FROM car) a
 
-        WHERE ROWNUM &lt;= (#{page}+1)*#{size})
+              WHERE ROWNUM &lt;= (#{page} + 1) * #{size})
 
-        WHERE rn &gt;= (#{page}*#{size})
+        WHERE rn &gt;= (#{page} * #{size})
     </select>
     <select id="findCarById" resultMap="carMap" parameterType="integer">
-        select CAR.id,CAR.brand,CAR.color,CAR.sites,CAR.fuelconsumption,CAR.dailyrent,CAR_USER.nickname ,Car.ADDTIME
-        from Car,CAR_USER where car.addperson=car_user.username and car.id=#{id}
+        select CAR.id,
+               CAR.brand,
+               CAR.color,
+               CAR.sites,
+               CAR.fuelconsumption,
+               CAR.dailyrent,
+               CAR_USER.nickname,
+               Car.ADDTIME,
+               CAR.PRODUCTIONDATE
+        from Car,
+             CAR_USER
+        where car.addperson = car_user.username
+          and car.id = #{id}
+    </select>
+    <select id="findCarById2" resultMap="carMap2" parameterType="integer">
+        select CAR.id,
+               CAR.brand,
+               CAR.color,
+               CAR.sites,
+               CAR.fuelconsumption,
+               CAR.dailyrent,
+               CAR_USER.USERNAME,
+               Car.ADDTIME,
+               CAR.PRODUCTIONDATE
+        from Car,
+             CAR_USER
+        where car.addperson = car_user.username
+          and car.id = #{id}
+    </select>
+    <select id="selectBySelective" resultType="com.ncu.car_manage.pojo.Car">
+        select * from CAR where 1=1
+        <if test="brand !=null and brand !=''">
+            and BRAND like CONCAT(concat('%',#{brand}),'%')
+        </if>
+        <if test="color !=null and color !=''">
+            and Color = #{color}
+        </if>
+        <if test="date !=null and date !=''">
+            and to_char(addTime,'yyyy-MM-dd') = #{date}
+        </if>
+        order by ID
     </select>
 </mapper>

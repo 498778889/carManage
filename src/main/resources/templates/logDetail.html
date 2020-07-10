@@ -8,36 +8,119 @@
     <script type="text/javascript" src="/layui/layui.js"></script>
 </head>
 <body class="layui-layout-body">
-    <div class="layui-layout layui-layout-admin">
-        <div class="layui-header">
-            <div class="layui-logo">汽车信息管理系统</div>
-            <!-- 头部区域（可配合layui已有的水平导航） -->
-            <ul class="layui-nav layui-layout-left">
-                <li class="layui-nav-item"><a th:href="@{'/carManage/logDetail?userName='+${userName}}">查看日志</a></li>
-                <li class="layui-nav-item"><a th:href="@{'/carManage/index?userName='+${userName}}">查看汽车信息</a></li>
-                <li class="layui-nav-item"><a th:href="@{'/carManage/brandDetail?userName='+${userName}}">汽车品牌管理</a></li>
-            </ul>
-            <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item"><a href="javascript:"> <span id="userNameSpan" th:text="${userName}"></span> </a>
-                    <dl class="layui-nav-child">
-                        <dd>
-                            <a th:href="@{'/carManage/userDetail?userName='+${userName}}">基本资料</a>
-                        </dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item"><a href="/carManage/login">退出</a></li>
-            </ul>
-        </div>
-        <div class="layui-body">
-            <div style="padding: 15px;">
-
-            </div>
-        </div>
-        <div class="layui-footer">
-            <!-- 底部固定区域 -->
-            © 2020 农琛宇 软工1702 8002117068
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">汽车信息管理系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a th:href="@{'/carManage/logDetail?userName='+${userName}}">查看日志</a></li>
+            <li class="layui-nav-item"><a th:href="@{'/carManage/index?userName='+${userName}}">查看汽车信息</a></li>
+            <li class="layui-nav-item"><a th:href="@{'/carManage/brandDetail?userName='+${userName}}">汽车品牌管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item"><a href="javascript:"> <span id="userNameSpan" th:text="${userName}"></span> </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a th:href="@{'/carManage/userDetail?userName='+${userName}}">基本资料</a>
+                    </dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/carManage/login">退出</a></li>
+        </ul>
+    </div>
+    <div class="layui-body">
+        <div style="padding: 15px;">
+            <table class="table table-striped table-sm" id="tb" lay-filter="tb"></table>
         </div>
     </div>
-    <script type="text/javascript" th:inline="none"></script>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 2020 农琛宇 软工1702 8002117068
+    </div>
+</div>
+<script th:inline="none" type="text/javascript">
+    jQuery(function () {
+        $ = layui.jquery;
+        layui.use(['form', 'laypage', 'layer', 'table', 'element'], function () {
+
+            var form = layui.form
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+                , element = layui.element; //元素操作
+            table.render({
+                elem: '#tb',
+                height: 500,
+                url: '/carManage/findRecordPage',
+                method: 'post',
+                limit: 10,
+                limits: [10, 50, 100],
+                page: true,
+                cellMinWidth: 10,
+                request: {
+                    pageName: 'page',
+                    limitName: 'size'
+                },
+                response: {
+                    statusName: 'status',
+                    countName: 'count',
+                    dataName: 'data'
+                },
+                cols: [[
+                    {field: 'id', title: 'id', sort: true},
+                    {field: 'username', title: '用户名'},
+                    {
+                        field: 'operationType', title: '操作类型', templet: function (d) {
+                            if (d.operationType === 0) {
+                                return "无操作";
+                            } else if (d.operationType === 1) {
+                                return "添加操作";
+                            } else if (d.operationType === 2) {
+                                return "修改操作";
+                            } else if (d.operationType === 3) {
+                                return "删除操作";
+                            } else if (d.operationType === 4) {
+                                return "注册操作";
+                            } else if (d.operationType === 5) {
+                                return "批量删除操作";
+                            }
+                        }
+                    },
+                    {
+                        field: 'operateTime', title: '操作时间', sort: true, templet: function (d) {
+                            return layui.util.toDateString(d.operateTime, 'yyyy-MM-dd HH:mm:ss');
+                        }
+                    }
+                ]],
+                done: function (res, curr, count) {
+                    console.log("表格渲染完成：");
+                    console.log(res);
+                    console.log(curr);
+                    console.log(count);
+                    // jQuery("[data-field = 'operationType']").children().each(function(){
+                    //     if($(this).text() === '1'){
+                    //         $(this).text("添加操作");
+                    //     }else if($(this).text() === '2'){
+                    //         $(this).text("修改操作");
+                    //     }
+                    //     else if($(this).text() === '3'){
+                    //         $(this).text("删除操作");
+                    //     }
+                    //     else if($(this).text() === '4'){
+                    //         $(this).text("注册操作");
+                    //     }
+                    //     else if($(this).text() === '5'){
+                    //         $(this).text("批量删除操作");
+                    //     }
+                    //     else if($(this).text() === '0'){
+                    //         $(this).text("无操作");
+                    //     }
+                    // });
+                }
+            });
+        });
+    });
+
+</script>
 </body>
 </html>
