@@ -30,7 +30,7 @@ select * from CAR_USER;
 select * from CAR;
 select * from CAR_Brand;
 select * from CAR_Record;
-
+select seq_car_user;
 insert into CAR_USER values(seq_car_user.nextval,'ncy','123456','ncy','ncy',1);
 insert into CAR values(seq_car.nextval,'BMWx6','white',5,11.3,1000,'ncy');
 commit;

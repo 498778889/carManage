@@ -14,8 +14,9 @@
         <div class="layui-logo">汽车信息管理系统</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">查看日志</a></li>
+            <li class="layui-nav-item"><a th:href="@{'/carManage/logDetail?userName='+${userName}}">查看日志</a></li>
             <li class="layui-nav-item"><a th:href="@{'/carManage/index?userName='+${userName}}">查看汽车信息</a></li>
+            <li class="layui-nav-item"><a th:href="@{'/carManage/brandDetail?userName='+${userName}}">汽车品牌管理</a></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item"><a href="javascript:;"> <span id="userNameSpan" th:text="${userName}"></span> </a>

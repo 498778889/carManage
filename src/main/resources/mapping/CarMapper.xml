@@ -37,7 +37,7 @@
         delete from car where id = #{id}
     </delete>
     <select id="findAllCar" resultType="com.ncu.car_manage.pojo.Car">
-        select * from car
+        select * from car order by ID
     </select>
     <select id="findCarPage" resultType="com.ncu.car_manage.pojo.Car" parameterType="integer">
         SELECT *

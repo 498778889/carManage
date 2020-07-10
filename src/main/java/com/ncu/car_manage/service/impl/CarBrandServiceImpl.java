@@ -1,5 +1,7 @@
 package com.ncu.car_manage.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ncu.car_manage.mapper.CarBrandmapper;
 import com.ncu.car_manage.pojo.CarBrand;
 import com.ncu.car_manage.service.CarBrandService;
@@ -25,8 +27,9 @@ public class CarBrandServiceImpl implements CarBrandService {
     }
 
     @Override
-    public List<CarBrand> findAllBrand() {
-        return carBrandmapper.selectAll();
+    public PageInfo<CarBrand> findAllBrand(int page, int size) {
+        PageHelper.startPage(page, size);
+        return new PageInfo<>(carBrandmapper.selectAll());
     }
 
     @Override

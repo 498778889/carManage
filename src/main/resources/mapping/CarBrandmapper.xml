@@ -15,7 +15,7 @@
     where ID = #{id,jdbcType=DECIMAL}
   </select>
   <select id="selectAll" resultType="com.ncu.car_manage.pojo.CarBrand">
-    select * from CAR_BRAND;
+    select * from CAR_BRAND order by ID;
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal">
     delete from CAR_BRAND
