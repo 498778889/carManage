@@ -1,0 +1,3 @@
+# carManage
+这个项目采用idea springboot thymeleaf layui aop ssm pagehelper Oracle做的一个粗糙的小项目
+要部署这个项目先要在Oracle中添加数据表，然后在application.yml上修改数据库连接，然后大概就可以愉快的玩耍了
