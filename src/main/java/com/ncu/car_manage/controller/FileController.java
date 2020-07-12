@@ -29,7 +29,10 @@ public class FileController {
         // 定义上传文件保存路径
         String path = filePath+"rotPhoto/";
         // 新建文件
-        String filename = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+        int lastIndexOf = file.getOriginalFilename().lastIndexOf(".");
+        String suffix = file.getOriginalFilename().substring(lastIndexOf);
+        String filename = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase()+suffix;
+
         File filepath = new File(path, filename);
 
         LOGGER.info("Name == >>{}",file.getName());
