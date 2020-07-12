@@ -15,4 +15,5 @@ public class Car {
     String addPerson;
     String productionDate;
     Date addTime;
+    String pic_url;
 }

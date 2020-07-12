@@ -5,7 +5,11 @@
     <title>主页</title>
     <link rel="stylesheet" href="/layui/css/layui.css" type="text/css">
     <script type="text/javascript" src="/js/jquery-3.4.1.js"></script>
-
+    <style>
+        img[src=""],img:not([src]){
+            opacity:0;
+        }
+    </style>
     <script type="text/javascript" src="/layui/layui.js"></script>
 </head>
 <body class="layui-layout-body">
@@ -35,7 +39,6 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-
             <div class="layui-form"
                  style="width: 1350px;border: #0C0C0C 1px solid;border-radius: 10px;padding-right: 50px">
                 <label class="layui-form-label" style="font-size: 30px">搜索</label>
@@ -90,6 +93,7 @@
                 <i class="layui-icon layui-icon-subtraction"></i>
                 删除选中
             </button>
+            <input type="file" id="photoFile" style="display: none;" onchange="upload()">
         </div>
     </div>
 
@@ -179,6 +183,8 @@
         jQuery(obj).attr("value", jQuery(obj).val());
     }
 
+
+
     function showAddDialog() {
         var form = layui.form;
         layer.open({
@@ -245,6 +251,13 @@
                 "                        <input type=\"text\" id=\"fuelConsumption\" name=\"fuelConsumption\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label class=\"layui-form-label\">上传图片</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <button onclick='uploadPic()' class='layui-btn' title='点击上传'>点击上传</button>" +
+                "                        <img id=\"preview_photo\" src=\"\" width=\"200px\" height=\"200px\" alt=\"pic\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
                 "            </div>",
             yes: function () {
                 var brand = layui.$("select[name='brand']").val();
@@ -254,7 +267,7 @@
                 var fuelConsumption = jQuery("#fuelConsumption").val();
                 var addPerson = jQuery("#userNameSpan").text();
                 var productionDate = jQuery("#addProductionDate").val();
-                console.log(productionDate);
+                var pic_url = jQuery("#preview_photo")[0].src;
                 var data = {
                     "brand": brand,
                     "color": color,
@@ -262,7 +275,8 @@
                     "productionDate": productionDate,
                     "dailyRent": dailyRent,
                     "fuelConsumption": fuelConsumption,
-                    "addPerson": addPerson
+                    "addPerson": addPerson,
+                    "pic_url":pic_url
                 };
                 jQuery.ajax({
                     url: "http://127.0.0.1:8088/car/add?userName=" + userNameSpan,
@@ -281,7 +295,30 @@
             }
         });
     }
-
+    function uploadPic() {
+        jQuery("#photoFile").click();
+    }
+    function upload() {
+        if (jQuery("#photoFile").val() === '') {
+            return;
+        }
+        var formData = new FormData();
+        formData.append('file', document.getElementById('photoFile').files[0]);
+        jQuery.ajax({
+            url:"http://127.0.0.1:8088/file/upload",
+            type:"post",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(res) {
+                alert("上传成功！");
+                jQuery("#preview_photo").attr("src", res.data);
+            },
+            error:function(data) {
+                alert("上传失败！")
+            }
+        });
+    }
     function showUpdateDialog(id) {
         layer.open({
             type: 1,
@@ -307,6 +344,7 @@
                             jQuery("#updateProductionDate").val(res.data.productionDate);
                             jQuery("#updateFuelConsumption").val(res.data.fuelConsumption);
                             jQuery("#updateAddPerson").val(res.data.addPerson);
+                            jQuery("#preview_photo").attr("src",res.data.pic_url);
                         }
                     }
                 });
@@ -350,6 +388,13 @@
                 "                        <input type=\"number\" id=\"updateFuelConsumption\" name=\"updateFuelConsumption\" class=\"layui-input\" onchange=\"changeValue(this)\">\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
+                "                <div class=\"layui-form-item\">\n" +
+                "                    <label class=\"layui-form-label\">上传图片</label>\n" +
+                "                    <div class=\"layui-input-block\">\n" +
+                "                        <button onclick='uploadPic()' class='layui-btn' title='点击上传'>点击上传</button>" +
+                "                        <img id=\"preview_photo\" src=\"\" width=\"200px\" height=\"200px\" alt=\"pic\">\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
                 "                <div class=\"layui-form-item\" hidden>\n" +
                 "                    <label class=\"layui-form-label\">上传人</label>\n" +
                 "                    <div class=\"layui-input-block\">\n" +
@@ -365,6 +410,7 @@
                 var fuelConsumption = jQuery("#updateFuelConsumption").val();
                 var addPerson = jQuery("#updateAddPerson").val();
                 var productionDate = jQuery("#updateProductionDate").val();
+                var pic_url = jQuery("#preview_photo")[0].src;
                 console.log(productionDate);
                 var data = {
                     "id": id,
@@ -374,7 +420,8 @@
                     "dailyRent": dailyRent,
                     "productionDate": productionDate,
                     "fuelConsumption": fuelConsumption,
-                    "addPerson": addPerson
+                    "addPerson": addPerson,
+                    "pic_url":pic_url
                 };
                 jQuery.ajax({
                     url: "http://127.0.0.1:8088/car/update?userName=" + userNameSpan,

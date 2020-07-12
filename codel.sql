@@ -51,3 +51,5 @@ operate_time date
 alter table CAR add addtime date;
 alter table CAR
     add productionDate varchar2(20);
+alter table CAR
+    add pic_url varchar2(500);

@@ -11,6 +11,7 @@
         <result property="addPerson" column="nickname" javaType="String" jdbcType="VARCHAR"/>
         <result property="productionDate" column="productionDate" jdbcType="VARCHAR"/>
         <result property="addTime" column="addtime" jdbcType="TIMESTAMP"/>
+        <result property="pic_url" column="pic_url" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap id="carMap2" type="com.ncu.car_manage.pojo.Car">
         <id property="id" column="id" javaType="int" jdbcType="NUMERIC"/>
@@ -22,9 +23,10 @@
         <result property="addPerson" column="username" jdbcType="VARCHAR"/>
         <result property="productionDate" column="productionDate" jdbcType="VARCHAR"/>
         <result property="addTime" column="addtime" jdbcType="TIMESTAMP"/>
+        <result property="pic_url" column="pic_url" jdbcType="VARCHAR"/>
     </resultMap>
     <insert id="addCar" parameterType="com.ncu.car_manage.pojo.Car">
-        insert into car(id, brand, color, sites, fuelconsumption, dailyrent, addperson, addTime, PRODUCTIONDATE)
+        insert into car(id, brand, color, sites, fuelconsumption, dailyrent, addperson, addTime, PRODUCTIONDATE,PIC_URL)
         values (seq_car.nextval,
                 #{brand,jdbcType=VARCHAR},
                 #{color,jdbcType=VARCHAR},
@@ -33,7 +35,8 @@
                 #{dailyRent,jdbcType=NUMERIC},
                 #{addPerson,jdbcType=VARCHAR},
                 sysdate,
-                #{productionDate,jdbcType=VARCHAR})
+                #{productionDate,jdbcType=VARCHAR},
+                #{pic_url,jdbcType=VARCHAR})
     </insert>
     <update id="update" parameterType="com.ncu.car_manage.pojo.Car">
         update car
@@ -43,7 +46,8 @@
             fuelconsumption = #{fuelConsumption,jdbcType=NUMERIC},
             dailyrent       = #{dailyRent,jdbcType=NUMERIC},
             PRODUCTIONDATE  = #{productionDate,jdbcType=VARCHAR},
-            addperson       = #{addPerson,jdbcType=VARCHAR}
+            addperson       = #{addPerson,jdbcType=VARCHAR},
+            pic_url         = #{pic_url,jdbcType=VARCHAR}
         where id = #{id,jdbcType=NUMERIC}
     </update>
     <delete id="delete" parameterType="integer">
@@ -78,7 +82,8 @@
                CAR.dailyrent,
                CAR_USER.nickname,
                Car.ADDTIME,
-               CAR.PRODUCTIONDATE
+               CAR.PRODUCTIONDATE,
+               CAR.PIC_URL
         from Car,
              CAR_USER
         where car.addperson = car_user.username
@@ -93,7 +98,8 @@
                CAR.dailyrent,
                CAR_USER.USERNAME,
                Car.ADDTIME,
-               CAR.PRODUCTIONDATE
+               CAR.PRODUCTIONDATE,
+               CAR.PIC_URL
         from Car,
              CAR_USER
         where car.addperson = car_user.username

@@ -104,6 +104,14 @@
                         <span th:text="${car.getAddTime()}"></span>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <label>图片预览</label>
+                    </td>
+                    <td>
+                        <img th:src="${car.getPic_url()}" alt="pic">
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
