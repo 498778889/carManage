@@ -108,7 +108,7 @@
             and Color = #{color}
         </if>
         <if test="date !=null and date !=''">
-            and to_char(addTime,'yyyy-MM-dd') = #{date}
+            and to_char(addTime,'yyyy-MM-dd') like CONCAT(concat('%',#{date}),'%')
         </if>
         order by ID
     </select>

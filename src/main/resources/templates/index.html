@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">日期</label>
+                    <label class="layui-form-label">添加日期</label>
                     <div class="layui-input-inline">
                         <input autocomplete="off" class="layui-input" id="yearSearch" name="year" placeholder="请输入年份"
                                type="number">
@@ -435,6 +435,11 @@
         }
         if (year != null && month != null && day != null) {
             date = year + "-" + month + "-" + day;
+        }else if (year != null && month != null && day === null){
+            date = year + "-" + month;
+        }
+        else if (year != null && month === null && day === null){
+            date = year;
         }
         tbCar.reload('tb', {
             method: 'post',
