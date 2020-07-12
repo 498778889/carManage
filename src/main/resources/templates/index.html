@@ -435,10 +435,10 @@
         }
         if (year != null && month != null && day != null) {
             date = year + "-" + month + "-" + day;
-        }else if (year != null && month != null && day === null){
+        }else if (year != null && month != null && day == null){
             date = year + "-" + month;
         }
-        else if (year != null && month === null && day === null){
+        else if (year != null && month == null && day == null){
             date = year;
         }
         tbCar.reload('tb', {
