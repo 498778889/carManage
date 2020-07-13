@@ -2,6 +2,7 @@ package com.ncu.car_manage.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import com.ncu.car_manage.pojo.Car;
 import com.ncu.car_manage.pojo.CarRecord;
 import com.ncu.car_manage.pojo.User;
@@ -10,9 +11,12 @@ import com.ncu.car_manage.service.CarService;
 import com.ncu.car_manage.service.UserService;
 import com.ncu.car_manage.utils.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.*;
 
 @Controller
 @RequestMapping("/carManage")
@@ -23,11 +27,19 @@ public class PageController {
     private UserService userService;
     @Autowired
     private CarRecordService carRecordService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @RequestMapping(value = "/login", name = "登录")
     public String toLogin() {
         return "login";
     }
 
+    @RequestMapping(value = "/logout", name = "注销")
+    public String Logout(HttpServletRequest request) {
+        String redisKey = getCookie(request,"redisKey");
+        redisTemplate.delete(redisKey);
+        return "login";
+    }
     @RequestMapping(value = "/register", name = "注册")
     public String toRegister() {
         return "register";
@@ -74,5 +86,18 @@ public class PageController {
         PageInfo<CarRecord> carList = new PageInfo<>(carRecordService.findAll());
 
         return JsonResult.OK(carList.getList(), carList.getTotal());
+    }
+
+    public static String getCookie(HttpServletRequest request, String key){
+        if(request == null || StringUtil.isEmpty(key)){
+            return "";
+        }
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if(key.equals(cookie.getName())){
+                return cookie.getValue();
+            }
+        }
+        return "";
     }
 }

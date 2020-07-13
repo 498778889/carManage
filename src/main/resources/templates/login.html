@@ -32,7 +32,6 @@
 
     <a href="/carManage/register" class="layui-btn" style="float: right">去注册</a>
     <button name="confirm" id="confirm" class="layui-btn" style="float: right;margin-right: 20px">登录</button>
-
 </div>
 
     <script type="text/javascript" th:inline="none">
@@ -52,7 +51,8 @@
                     // 服务器请求响应成功执行的方法
                     success: function(res) {
                         if(res.status === 200) {
-                            alert("登录成功!");
+                            alert("登录成功");
+                            document.cookie = "redisKey="+res.data;
                             location.href=href;
                         }
                         else{

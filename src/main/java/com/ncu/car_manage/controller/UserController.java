@@ -10,17 +10,20 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/User")
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private StringRedisTemplate redisTemplate;
+
     @LoggerOperater(type = "register")
     @PostMapping("/register")
     public JsonResult register(@RequestBody User user){
@@ -49,14 +52,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public JsonResult login(HttpServletRequest request, @RequestBody User user){
+    public JsonResult login(HttpServletRequest request, HttpServletResponse response, @RequestBody User user){
         User exist=userService.findUserByUserName(user.getUserName());
         if (exist!=null){
             if (userService.login(user.getUserName(), user.getPassword())){
-                HttpSession session = request.getSession();
-                session.setAttribute("userName ",user.getUserName());
-                redisTemplate.opsForValue().set("userName:"+user.getUserName(),session.getId());
-                return JsonResult.OK("登录成功!");
+                String redisKey = UUID.randomUUID().toString();
+                redisTemplate.opsForValue().set(redisKey,String.valueOf(exist.getId()));
+                return JsonResult.OK(redisKey);
             }
             return JsonResult.ERROR("密码错误!");
         }
