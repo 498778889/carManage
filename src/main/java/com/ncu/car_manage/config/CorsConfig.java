@@ -1,4 +1,4 @@
-package com.ncu.car_manage.utils;
+package com.ncu.car_manage.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

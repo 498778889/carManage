@@ -50,9 +50,22 @@ spring:
     cache: false
     encoding: UTF-8
     mode: HTML
-############################################################
-    #自定义属性
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: 1
+    timeout: 3000
+  session:
+    store-type: redis
 file:
+  ############################################################
+  #自定义属性
   upload:
   #设置文件上传位置(绝对路径)
     path: E:/images/

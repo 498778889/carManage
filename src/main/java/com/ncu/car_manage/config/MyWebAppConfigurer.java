@@ -1,8 +1,9 @@
-package com.ncu.car_manage.utils;
+package com.ncu.car_manage.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,6 +18,11 @@ public class MyWebAppConfigurer implements WebMvcConfigurer {
     /**显示相对地址*/
     @Value("${file.upload.relative}")
     private String fileRelativePath;
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("login");
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -6,9 +6,11 @@ import com.ncu.car_manage.utils.JsonResult;
 import com.ncu.car_manage.utils.LoggerOperater;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -16,6 +18,9 @@ import javax.servlet.http.HttpSession;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @LoggerOperater(type = "register")
     @PostMapping("/register")
     public JsonResult register(@RequestBody User user){
@@ -44,10 +49,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public JsonResult login(@RequestBody User user){
-        boolean exist=userService.findUserByName(user.getUserName());
-        if (exist){
+    public JsonResult login(HttpServletRequest request, @RequestBody User user){
+        User exist=userService.findUserByUserName(user.getUserName());
+        if (exist!=null){
             if (userService.login(user.getUserName(), user.getPassword())){
+                HttpSession session = request.getSession();
+                session.setAttribute("userName ",user.getUserName());
+                redisTemplate.opsForValue().set("userName:"+user.getUserName(),session.getId());
                 return JsonResult.OK("登录成功!");
             }
             return JsonResult.ERROR("密码错误!");
