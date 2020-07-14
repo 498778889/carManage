@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RedisSessionInterceptor implements HandlerInterceptor {
+public class RedisInterceptor implements HandlerInterceptor {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -59,7 +59,6 @@ public class RedisSessionInterceptor implements HandlerInterceptor {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         try {
-            //response.getWriter().print("<script>alert("+JsonResult.ERROR("用户未登录！")+")</script>");
             response.sendRedirect("/carManage/logout");
         } catch (IOException e) {
             e.printStackTrace();

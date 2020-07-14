@@ -1,18 +1,17 @@
 package com.ncu.car_manage.config;
 
-import com.ncu.car_manage.interceptor.RedisSessionInterceptor;
+import com.ncu.car_manage.interceptor.RedisInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
-    public RedisSessionInterceptor getSessionInterceptor() {
-        return new RedisSessionInterceptor();
+    public RedisInterceptor getSessionInterceptor() {
+        return new RedisInterceptor();
     }
 //    @Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry){
