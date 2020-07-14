@@ -1,7 +1,6 @@
 package com.ncu.car_manage.interceptor;
 
 import com.github.pagehelper.util.StringUtil;
-import com.ncu.car_manage.utils.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;

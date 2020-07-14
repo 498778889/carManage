@@ -1,6 +1,7 @@
 package com.ncu.car_manage.utils;
 
 import com.ncu.car_manage.pojo.CarRecord;
+import com.ncu.car_manage.pojo.User;
 import com.ncu.car_manage.service.CarRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -41,10 +42,22 @@ public class LoggerAspect {
             // 获取操作
             LoggerOperater loggerOperater = method.getAnnotation(LoggerOperater.class);
 
+            Object[] args = joinPoint.getArgs();
+            User user=new User();
+            if (args != null && args.length > 0 && args[0].getClass() == User.class) {
+                user= (User) args[0];
+            }
             String type =loggerOperater.type();
             String str = request.getQueryString();
-            String[] strS = str.split("=");
-            String userName=strS[strS.length-1];
+            String[] strS;
+            String userName;
+            if (!Objects.equals(type, "register")){
+                strS= str.split("=");
+                userName=strS[strS.length-1];
+            }else {
+                userName = user.getUserName();
+            }
+
             BigDecimal id= BigDecimal.valueOf(0);;
             switch (type) {
                 case "add":

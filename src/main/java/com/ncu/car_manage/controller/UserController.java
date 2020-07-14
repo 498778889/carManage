@@ -26,38 +26,39 @@ public class UserController {
 
     @LoggerOperater(type = "register")
     @PostMapping("/register")
-    public JsonResult register(@RequestBody User user){
+    public JsonResult register(@RequestBody User user) {
         boolean res = userService.register(user);
-        if (res){
+        if (res) {
             return JsonResult.OK("success");
         }
         return JsonResult.ERROR("用户名已经存在!请更换!");
     }
+
     @GetMapping("/exist/{userName}")
-    public JsonResult exist(@PathVariable("userName") String userName){
-        boolean exist=userService.findUserByName(userName);
-        if (exist){
+    public JsonResult exist(@PathVariable("userName") String userName) {
+        boolean exist = userService.findUserByName(userName);
+        if (exist) {
             return JsonResult.ERROR("该用户名已被注册!");
         }
         return JsonResult.OK("该用户名可以使用!");
     }
 
     @GetMapping("/find/{userName}")
-    public JsonResult findUser(@PathVariable("userName") String userName){
-        User exist=userService.findUserByUserName(userName);
-        if (exist!=null){
-            return JsonResult.OK(exist,1);
+    public JsonResult findUser(@PathVariable("userName") String userName) {
+        User exist = userService.findUserByUserName(userName);
+        if (exist != null) {
+            return JsonResult.OK(exist, 1);
         }
         return JsonResult.ERROR("无法查询！");
     }
 
     @PostMapping("/login")
-    public JsonResult login(HttpServletRequest request, HttpServletResponse response, @RequestBody User user){
-        User exist=userService.findUserByUserName(user.getUserName());
-        if (exist!=null){
-            if (userService.login(user.getUserName(), user.getPassword())){
+    public JsonResult login(@RequestBody User user) {
+        User exist = userService.findUserByUserName(user.getUserName());
+        if (exist != null) {
+            if (userService.login(user.getUserName(), user.getPassword(), exist.getSalt())) {
                 String redisKey = UUID.randomUUID().toString();
-                redisTemplate.opsForValue().set(redisKey,String.valueOf(exist.getId()));
+                redisTemplate.opsForValue().set(redisKey, String.valueOf(exist.getId()));
                 return JsonResult.OK(redisKey);
             }
             return JsonResult.ERROR("密码错误!");

@@ -8,6 +8,7 @@
         <result property="nickName" column="nickname" javaType="String" jdbcType="VARCHAR"/>
         <result property="realName" column="realname" javaType="String" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" javaType="int" jdbcType="NUMERIC"/>
+        <result property="salt" column="salt" javaType="String" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="findByUserName" parameterType="string" resultMap="accountMap">
         select * from CAR_USER
@@ -19,13 +20,14 @@
     </select>
 
     <insert id="register" parameterType="com.ncu.car_manage.pojo.User">
-      insert into CAR_USER(id,username,pwd,nickname,realname,sex)
+      insert into CAR_USER(id,username,pwd,nickname,realname,sex,SALT)
       values
       (seq_car_user.nextval,
        #{userName,jdbcType=VARCHAR},
        #{password,jdbcType=VARCHAR},
        #{nickName,jdbcType=VARCHAR},
        #{realName,jdbcType=VARCHAR},
-       #{sex,jdbcType=NUMERIC})
+       #{sex,jdbcType=NUMERIC},
+       #{salt,jdbcType=VARCHAR})
     </insert>
 </mapper>

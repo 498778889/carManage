@@ -10,4 +10,5 @@ public class User {
     String nickName;
     String realName;
     int sex;
+    String salt;
 }
